@@ -45,12 +45,41 @@ public class Main {
         return count[query_row][query_glass];
     }
 
+    class LUPrefix {
+
+        boolean[] flag;
+        int n;
+        int length;
+        int pos;
+        public LUPrefix(int n) {
+            flag = new boolean[n+1];
+            this.n = n;
+            this.length = 0;
+            this.pos = 1;
+        }
+
+        public void upload(int video) {
+            flag[video] = true;
+            if(video==pos){
+                for(int i=pos;i<=n;i++){
+                    if(flag[i])
+                        length++;
+                    else{
+                        pos = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public int longest() {
+            return length;
+        }
+    }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
         int[] nums = new int[]{3,0,2,5,4};
         int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
-        main.champagneTower(100000009,33,17);
-
     }
 }
