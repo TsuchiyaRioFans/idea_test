@@ -16,65 +16,20 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    public double champagneTower(int poured, int query_row, int query_glass) {
-        if(poured==0)
-            return 0D;
-        double[][] count = new double[query_row+1][query_row+1];
-        count[0][0]=poured;
-        int pos = 0;
-        while (pos<=query_row){
-            boolean flag = true;
-            for(int i=0;i<=query_row;i++){
-                if(count[pos][i]>1){
-                    if(pos+1<=query_row){
-                        double more = (count[pos][i]-1.0)/2.0;
-                        count[pos][i]=1.0D;
-                        count[pos+1][i]+=more;
-                        count[pos+1][i+1]+=more;
-                        flag = false;
-                    }
-                    else{
-                        count[pos][i] = 1.0D;
-                    }
-                }
-            }
-            if(flag)
-                break;
-            pos++;
-        }
-        return count[query_row][query_glass];
-    }
-
-    class LUPrefix {
-
-        boolean[] flag;
-        int n;
-        int length;
-        int pos;
-        public LUPrefix(int n) {
-            flag = new boolean[n+1];
-            this.n = n;
-            this.length = 0;
-            this.pos = 1;
-        }
-
-        public void upload(int video) {
-            flag[video] = true;
-            if(video==pos){
-                for(int i=pos;i<=n;i++){
-                    if(flag[i])
-                        length++;
-                    else{
-                        pos = i;
-                        break;
+    public int unequalTriplets(int[] nums) {
+        int ans = 0;
+        int n = nums.length;
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                if(nums[i]!=nums[j]){
+                    for(int k=j+1;k<n;k++){
+                        if(nums[j]!=nums[k]&&nums[i]!=nums[k])
+                            ans++;
                     }
                 }
             }
         }
-
-        public int longest() {
-            return length;
-        }
+        return ans;
     }
     public static void main(String[] args) {
         Main main = new Main();
