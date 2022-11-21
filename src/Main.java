@@ -16,25 +16,34 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    public int unequalTriplets(int[] nums) {
+    public int maximumUniqueSubarray(int[] nums) {
+        int left = 0;
+        int right = 0;
+        Set<Integer> set = new HashSet<>();
         int ans = 0;
-        int n = nums.length;
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){
-                if(nums[i]!=nums[j]){
-                    for(int k=j+1;k<n;k++){
-                        if(nums[j]!=nums[k]&&nums[i]!=nums[k])
-                            ans++;
-                    }
+        int count = 0;
+        while (right<nums.length){
+            int val = nums[right];
+            if(set.contains(val)){
+                ans = Math.max(ans,count);
+                while (set.contains(val)){
+                    count-=nums[left];
+                    set.remove(nums[left]);
+                    left++;
                 }
             }
+            count+=val;
+            set.add(val);
+            right++;
         }
+        ans = Math.max(ans,count);
         return ans;
     }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
-        int[] nums = new int[]{3,0,2,5,4};
+        int[] nums = new int[]{4,2,4,5,6};
         int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
+        main.maximumUniqueSubarray(nums);
     }
 }
