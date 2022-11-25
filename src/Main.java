@@ -16,49 +16,41 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    boolean flag;
-    public void dfs(List<Integer> list,String s,int pos){
-        if(flag)
-            return;
-        if(pos==s.length()){
-            if(list.size()>2)
-                flag = true;
-            return;
-        }
-        for(int i=pos+1;i<=s.length();i++){
-            String temp = s.substring(pos,i);
-            long val1 = Long.parseLong(temp);
-            if(val1>Integer.MAX_VALUE)
-                break;
-            int val = Integer.parseInt(temp);
-            if(temp.length()>=2&&temp.charAt(0)=='0')
-                break;
-            if(list.size()<=1){
-                list.add(val);
-                dfs(list,s,i);
+    public int expressiveWords(String s, String[] words) {
+        int ans = 0;
+        for (String word : words) {
+            if (expand(s, word)) {
+                ++ans;
             }
-            else{
-                int sum = list.get(list.size()-1)+list.get(list.size()-2);
-                if(sum>val){
-                    continue;
-                }
-                else if(sum==val){
-                    list.add(sum);
-                    dfs(list,s,i);
-                }
-
-                else
-                    break;
-            }
-            if(flag)
-                return;
-            list.remove(list.size()-1);
         }
-    }
-    public List<Integer> splitIntoFibonacci(String num) {
-        List<Integer> ans = new ArrayList<>();
-        dfs(ans,num,0);
         return ans;
+    }
+
+    private boolean expand(String s, String t) {
+        int i = 0, j = 0;
+        while (i < s.length() && j < t.length()) {
+            if (s.charAt(i) != t.charAt(j)) {
+                return false;
+            }
+            char ch = s.charAt(i);
+            int cnti = 0;
+            while (i < s.length() && s.charAt(i) == ch) {
+                ++cnti;
+                ++i;
+            }
+            int cntj = 0;
+            while (j < t.length() && t.charAt(j) == ch) {
+                ++cntj;
+                ++j;
+            }
+            if (cnti < cntj) {
+                return false;
+            }
+            if (cnti > cntj && cnti < 3) {
+                return false;
+            }
+        }
+        return i == s.length() && j == t.length();
     }
 
 
@@ -67,6 +59,5 @@ public class Main {
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
         int[] nums = new int[]{4,2,4,5,6};
         int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
-        main.splitIntoFibonacci("5511816597");
     }
 }
