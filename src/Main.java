@@ -53,7 +53,36 @@ public class Main {
         return i == s.length() && j == t.length();
     }
 
-
+    public List<String> wordSubsets(String[] words1, String[] words2) {
+        int[] max = new int[26];
+        for(String s:words2){
+            int[] temp = new int[26];
+            for(int i=0;i<s.length();i++){
+                int pos = s.charAt(i)-'a';
+                temp[pos]++;
+            }
+            for(int i=0;i<26;i++)
+                max[i] = Math.max(max[i],temp[i]);
+        }
+        List<String> ans = new ArrayList<>();
+        for(String s:words1){
+            int[] temp = new int[26];
+            for(int i=0;i<s.length();i++){
+                int pos = s.charAt(i)-'a';
+                temp[pos]++;
+            }
+            boolean flag = true;
+            for(int i=0;i<26;i++){
+                if(temp[i]<max[i]){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+                ans.add(s);
+        }
+        return ans;
+    }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
