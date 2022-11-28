@@ -16,77 +16,31 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    public int expressiveWords(String s, String[] words) {
-        int ans = 0;
-        for (String word : words) {
-            if (expand(s, word)) {
-                ++ans;
-            }
+    public double largestSumOfAverages(int[] nums, int k) {
+        int n = nums.length;
+        double[][] dp = new double[n+1][k+1];
+        double[] sum = new double[n+1];
+        for(int i=1;i<=n;i++){
+            sum[i] = sum[i-1]+nums[i-1];
         }
-        return ans;
-    }
-
-    private boolean expand(String s, String t) {
-        int i = 0, j = 0;
-        while (i < s.length() && j < t.length()) {
-            if (s.charAt(i) != t.charAt(j)) {
-                return false;
-            }
-            char ch = s.charAt(i);
-            int cnti = 0;
-            while (i < s.length() && s.charAt(i) == ch) {
-                ++cnti;
-                ++i;
-            }
-            int cntj = 0;
-            while (j < t.length() && t.charAt(j) == ch) {
-                ++cntj;
-                ++j;
-            }
-            if (cnti < cntj) {
-                return false;
-            }
-            if (cnti > cntj && cnti < 3) {
-                return false;
-            }
-        }
-        return i == s.length() && j == t.length();
-    }
-
-    public List<String> wordSubsets(String[] words1, String[] words2) {
-        int[] max = new int[26];
-        for(String s:words2){
-            int[] temp = new int[26];
-            for(int i=0;i<s.length();i++){
-                int pos = s.charAt(i)-'a';
-                temp[pos]++;
-            }
-            for(int i=0;i<26;i++)
-                max[i] = Math.max(max[i],temp[i]);
-        }
-        List<String> ans = new ArrayList<>();
-        for(String s:words1){
-            int[] temp = new int[26];
-            for(int i=0;i<s.length();i++){
-                int pos = s.charAt(i)-'a';
-                temp[pos]++;
-            }
-            boolean flag = true;
-            for(int i=0;i<26;i++){
-                if(temp[i]<max[i]){
-                    flag = false;
-                    break;
+        for(int i=1;i<=n;i++)
+            dp[i][1] = sum[i]/i;
+        for(int j=2;j<=k;j++){
+            for(int i=j;i<=n;i++){
+                for(int p=j-1;p<i;p++){
+                    double val = dp[p][j-1]+(sum[i]-sum[p])/ (i-p);
+                    dp[i][j] = Math.max(dp[i][j],val);
                 }
             }
-            if(flag)
-                ans.add(s);
         }
-        return ans;
+        return dp[n][k];
     }
+
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
-        int[] nums = new int[]{4,2,4,5,6};
+        int[] nums = new int[]{9,1,2,3,9};
         int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
+        main.largestSumOfAverages(nums,3);
     }
 }
