@@ -18,23 +18,49 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    public boolean isCircularSentence(String sentence) {
-        String[] ss = sentence.split(" ");
-        for(int i=0;i<ss.length;i++){
-            int after = (i+1)%ss.length;
-            String s1 = ss[i];
-            String s2 = ss[after];
-            if(s1.charAt(s1.length()-1)!=s2.charAt(0))
-                return false;
+    public int numberOfSubarrays(int[] nums, int k) {
+        int n = nums.length;
+        int[] cnt = new int[n + 1];
+        int odd = 0, ans = 0;
+        cnt[0] = 1;
+        for (int i = 0; i < n; ++i) {
+            odd += nums[i] & 1;
+            ans += odd >= k ? cnt[odd - k] : 0;
+            cnt[odd] += 1;
         }
-        return true;
+        return ans;
     }
 
+    public Map<Long,Integer> getSums(int[] nums1){
+        int m = nums1.length;
+        Map<Long,Integer> map = new HashMap<>();
+        for(int i=0;i<m;i++){
+            for(int j=i+1;j<m;j++){
+                long val = (long)nums1[i]*(long)nums1[j];
+                map.put(val,1+map.getOrDefault(val,0));
+            }
+        }
+        return map;
+    }
+
+    public int getAns(Map<Long,Integer> sum,int[] nums){
+        int ans = 0;
+        for(int n:nums){
+            long temp = (long)Math.pow(n,2);
+            ans+=sum.getOrDefault(temp,0);
+        }
+        return ans;
+    }
+    public int numTriplets(int[] nums1, int[] nums2) {
+        Map<Long,Integer> sum1 = getSums(nums1);
+        Map<Long,Integer> sum2 = getSums(nums2);
+        return getAns(sum1,nums2)+getAns(sum2,nums1);
+    }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
-        int[] nums = new int[]{9,1,2,3,9};
+        int[] nums = new int[]{43024,99908};
         int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
-
+        main.numTriplets(nums,new int[]{1864});
     }
 }
