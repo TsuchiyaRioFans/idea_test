@@ -56,11 +56,44 @@ public class Main {
         Map<Long,Integer> sum2 = getSums(nums2);
         return getAns(sum1,nums2)+getAns(sum2,nums1);
     }
+
+    public int numSteps(String s) {
+        if(s.length()==1){
+            return s.equals("0")?1:0;
+        }
+        StringBuffer sb = new StringBuffer(s);
+        int ans = 0;
+        while (sb.length()>1){
+            int length = sb.length();
+            if(sb.charAt(length-1)=='0'){
+                sb.deleteCharAt(length-1);
+            }
+            else{
+                sb.setCharAt(length-1,'0');
+                boolean flag = false;
+                for(int i=length-2;i>=0;i--){
+                    char ch = sb.charAt(i);
+                    if(ch=='0'){
+                        sb.setCharAt(i,'1');
+                        flag = true;
+                        break;
+                    }
+                    else{
+                        sb.setCharAt(i,'0');
+                    }
+                }
+                if(!flag)
+                    sb.insert(0,'1');
+            }
+            ans++;
+        }
+        return sb.toString().equals("1")?ans:ans+1;
+    }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
         int[] nums = new int[]{43024,99908};
         int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
-        main.numTriplets(nums,new int[]{1864});
+        main.numSteps("1101");
     }
 }
