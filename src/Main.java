@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.*;
 
 import static java.lang.Character.toLowerCase;
@@ -18,82 +19,32 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    public int numberOfSubarrays(int[] nums, int k) {
-        int n = nums.length;
-        int[] cnt = new int[n + 1];
-        int odd = 0, ans = 0;
-        cnt[0] = 1;
-        for (int i = 0; i < n; ++i) {
-            odd += nums[i] & 1;
-            ans += odd >= k ? cnt[odd - k] : 0;
-            cnt[odd] += 1;
-        }
-        return ans;
-    }
-
-    public Map<Long,Integer> getSums(int[] nums1){
-        int m = nums1.length;
-        Map<Long,Integer> map = new HashMap<>();
-        for(int i=0;i<m;i++){
-            for(int j=i+1;j<m;j++){
-                long val = (long)nums1[i]*(long)nums1[j];
-                map.put(val,1+map.getOrDefault(val,0));
-            }
-        }
-        return map;
-    }
-
-    public int getAns(Map<Long,Integer> sum,int[] nums){
-        int ans = 0;
+    public int minElements(int[] nums, int limit, int goal) {
+        BigInteger sum = new BigInteger("0");
         for(int n:nums){
-            long temp = (long)Math.pow(n,2);
-            ans+=sum.getOrDefault(temp,0);
+            sum = sum.add(new BigInteger(String.valueOf(n)));
         }
-        return ans;
-    }
-    public int numTriplets(int[] nums1, int[] nums2) {
-        Map<Long,Integer> sum1 = getSums(nums1);
-        Map<Long,Integer> sum2 = getSums(nums2);
-        return getAns(sum1,nums2)+getAns(sum2,nums1);
-    }
-
-    public int numSteps(String s) {
-        if(s.length()==1){
-            return s.equals("0")?1:0;
-        }
-        StringBuffer sb = new StringBuffer(s);
+        BigInteger goal1 = new BigInteger(String.valueOf(goal));
+        sum = goal1.subtract(sum);
+        if(sum.signum()<0)
+            sum = sum.multiply(new BigInteger("-1"));
+        if(sum.signum()==0)
+            return 0;
         int ans = 0;
-        while (sb.length()>1){
-            int length = sb.length();
-            if(sb.charAt(length-1)=='0'){
-                sb.deleteCharAt(length-1);
-            }
-            else{
-                sb.setCharAt(length-1,'0');
-                boolean flag = false;
-                for(int i=length-2;i>=0;i--){
-                    char ch = sb.charAt(i);
-                    if(ch=='0'){
-                        sb.setCharAt(i,'1');
-                        flag = true;
-                        break;
-                    }
-                    else{
-                        sb.setCharAt(i,'0');
-                    }
-                }
-                if(!flag)
-                    sb.insert(0,'1');
-            }
-            ans++;
+        BigInteger temp = new BigInteger("0");
+        BigInteger max = new BigInteger(String.valueOf(limit));
+        temp = sum.divide(max);
+        if(sum.mod(max).compareTo(new BigInteger("0"))>0){
+            temp = temp.add(new BigInteger("1"));
         }
-        return sb.toString().equals("1")?ans:ans+1;
+        return Integer.parseInt(String.valueOf(temp));
     }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
         int[] nums = new int[]{43024,99908};
-        int[][] nums1 = new int[][]{{1,5},{1,1},{1,6},{0,2}};
-        main.numSteps("1101");
+        String[] ss = new String[]{"gta","gta(1)","gta","avalon"};
+        int[][] nums1 = new int[][]{{1,2,4},{3,3,1}};
+        System.out.println(Math.pow(10,14)>Long.MAX_VALUE);
     }
 }
