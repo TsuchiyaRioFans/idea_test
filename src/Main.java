@@ -19,35 +19,35 @@ public class Main {
         System.out.println(sb.toString());
     }
 
-    public int[][] onesMinusZeros(int[][] grid) {
-        int m = grid.length;
-        int n = grid[0].length;
-        int[][] ans = new int[m][n];
-        int[] oneRows = new int[m];
-        int[] oneCols = new int[n];
-        for(int i=0;i<m;i++){
-            int count = 0;
-            for(int j=0;j<n;j++){
-                if(grid[i][j]==1)
-                    count++;
-            }
-            oneRows[i] = count;
-        }
-        for(int i=0;i<n;i++){
-            int count = 0;
-            for(int j=0;j<m;j++){
-                if(grid[j][i]==1){
-                    count++;
+    public class ListNode {
+      int val;
+      ListNode next;
+      ListNode() {}
+      ListNode(int val) { this.val = val; }
+      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+    }
+    public ListNode removeNodes(ListNode head) {
+        Deque<ListNode> deque = new ArrayDeque<>();
+        while (head!=null){
+            if(deque.isEmpty())
+                deque.offerLast(head);
+            else{
+                while (!deque.isEmpty()){
+                    int val = deque.peekLast().val;
+                    if(val<head.val){
+                        deque.pollLast();
+                    }
+                    else
+                        break;
                 }
+                if(!deque.isEmpty()){
+                    deque.peekLast().next = head;
+                }
+                deque.offerLast(head);
             }
-            oneCols[i]=count;
+            head = head.next;
         }
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                ans[i][j] = oneRows[i]+oneCols[j]-(m-oneRows[i])-(n-oneCols[j]);
-            }
-        }
-        return ans;
+        return deque.peekFirst();
     }
     public static void main(String[] args) {
         Main main = new Main();
