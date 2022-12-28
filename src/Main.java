@@ -27,64 +27,36 @@ public class Main {
       ListNode(int val, ListNode next) { this.val = val; this.next = next; }
     }
 
-    public String largestMerge(String word1, String word2) {
-        StringBuffer sb = new StringBuffer();
-        int pos1 = 0;
-        int pos2 = 0;
-        while(pos1<word1.length()&&pos2<word2.length()){
-            char ch1 = word1.charAt(pos1);
-            char ch2 = word2.charAt(pos2);
-            if(ch1>ch2){
-                sb.append(ch1);
-                pos1++;
+    public int closetTarget(String[] words, String target, int startIndex) {
+        int ans = Integer.MAX_VALUE;
+        List<Integer> list = new ArrayList<>();
+        for(int i=0;i<words.length;i++){
+            if(words[i].equals(target)){
+                list.add(i);
             }
-            else if(ch1<ch2){
-                sb.append(ch2);
-                pos2++;
+        }
+        for(int i=0;i<list.size();i++){
+            int val = list.get(i);
+            int dis1;
+            int dis2;
+            if(val>startIndex){
+                dis1 = Math.abs(startIndex - val);
+                dis2 = startIndex + (words.length - val);
             }
             else{
-                int temp1 = pos1+1;
-                int temp2 = pos2+1;
-                boolean flag = true;
-                while (temp1<word1.length()&&temp2<word2.length()){
-                    if(word1.charAt(temp1)==word2.charAt(temp2)){
-                        temp1++;
-                        temp2++;
-                    }
-                    else if(word1.charAt(temp1)>word2.charAt(temp2))
-                        break;
-                    else{
-                        flag = false;
-                        break;
-                    }
-                }
-                if(flag&&temp1!=word1.length()){
-                    sb.append(ch1);
-                    pos1++;
-                }
-                else{
-                    sb.append(ch2);
-                    pos2++;
-                }
+                dis1 = startIndex - val;
+                dis2 = val + (words.length - startIndex);
             }
+            ans = Math.min(ans,Math.min(dis1,dis2));
         }
-        while (pos1<word1.length()){
-            char ch1 = word1.charAt(pos1);
-            sb.append(ch1);
-            pos1++;
-        }
-        while (pos2<word2.length()){
-            char ch2 = word2.charAt(pos2);
-            sb.append(ch2);
-            pos2++;
-        }
-        return sb.toString();
+        return ans==Integer.MAX_VALUE?-1:ans;
     }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
-        int[] nums = new int[]{1000000000,1000000000,1000000000};
-        String[] ss = new String[]{"gta","gta(1)","gta","avalon"};
+        int[] nums = new int[]{1,0,0,-1};
+        String[] ss = new String[]{"a","b","leetcode"};
         int[][] nums1 = new int[][]{{-5,0}};
+        main.closetTarget(ss,"leetcode",0);
     }
 }
