@@ -27,36 +27,43 @@ public class Main {
       ListNode(int val, ListNode next) { this.val = val; this.next = next; }
     }
 
-    public int closetTarget(String[] words, String target, int startIndex) {
-        int ans = Integer.MAX_VALUE;
-        List<Integer> list = new ArrayList<>();
-        for(int i=0;i<words.length;i++){
-            if(words[i].equals(target)){
-                list.add(i);
-            }
-        }
-        for(int i=0;i<list.size();i++){
-            int val = list.get(i);
-            int dis1;
-            int dis2;
-            if(val>startIndex){
-                dis1 = Math.abs(startIndex - val);
-                dis2 = startIndex + (words.length - val);
+    int n;
+
+    public int maxDistance(int[] price, int k) {
+        this.n = price.length;
+        Arrays.sort(price);
+        int left = 0;
+        int right = price[n-1];
+        while (left+1<right){
+            int mid = left+(right-left)/2;
+            if(check(price,mid,k)){
+                left = mid;
             }
             else{
-                dis1 = startIndex - val;
-                dis2 = val + (words.length - startIndex);
+                right = mid;
             }
-            ans = Math.min(ans,Math.min(dis1,dis2));
         }
-        return ans==Integer.MAX_VALUE?-1:ans;
+        return left;
     }
+    public boolean check(int[] price,int val,int k){
+        int pre = price[0];
+        int count = 1;
+        for(int i=1;i<n;i++){
+            if(pre+val<=price[i]){
+                count++;
+                pre = price[i];
+            }
+            if(count==k)
+                return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
         int[] nums = new int[]{1,0,0,-1};
         String[] ss = new String[]{"a","b","leetcode"};
         int[][] nums1 = new int[][]{{-5,0}};
-        main.closetTarget(ss,"leetcode",0);
     }
 }
