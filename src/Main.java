@@ -27,36 +27,57 @@ public class Main {
       ListNode(int val, ListNode next) { this.val = val; this.next = next; }
     }
 
-    int n;
-
-    public int maxDistance(int[] price, int k) {
-        this.n = price.length;
-        Arrays.sort(price);
-        int left = 0;
-        int right = price[n-1];
-        while (left+1<right){
-            int mid = left+(right-left)/2;
-            if(check(price,mid,k)){
-                left = mid;
+    public int getNumberOfBacklogOrders(int[][] orders) {
+        int ans = 0;
+        Queue<int[]> buy = new PriorityQueue<>((a,b)->b[0]-a[0]);
+        Queue<int[]> sell = new PriorityQueue<>((a,b)->a[0]-b[0]);
+        for(int[] order:orders){
+            int type = order[2];
+            int val = order[0];
+            int count = order[1];
+            if(type==0){
+                while (!sell.isEmpty()&&sell.peek()[0]<=val&&count>0){
+                    int count1 = sell.peek()[1];
+                    if(count>=count1){
+                        count-=count1;
+                        sell.poll();
+                    }
+                    else{
+                        sell.peek()[1]-=count;
+                        count = 0;
+                    }
+                }
+                if(count>0)
+                    buy.offer(new int[]{val,count});
             }
             else{
-                right = mid;
+                while (!buy.isEmpty()&&buy.peek()[0]>=val&&count>0){
+                    int count1 = buy.peek()[1];
+                    if(count>=count1){
+                        count-=count1;
+                        buy.poll();
+                    }
+                    else{
+                        buy.peek()[1]-=count;
+                        count = 0;
+                    }
+                }
+                if(count>0)
+                    sell.offer(new int[]{val,count});
             }
         }
-        return left;
-    }
-    public boolean check(int[] price,int val,int k){
-        int pre = price[0];
-        int count = 1;
-        for(int i=1;i<n;i++){
-            if(pre+val<=price[i]){
-                count++;
-                pre = price[i];
-            }
-            if(count==k)
-                return true;
+        final int mod = (int)Math.pow(10,9)+7;
+        while (!buy.isEmpty()){
+            int[] temp = buy.poll();
+            ans+=temp[1];
+            ans%=mod;
         }
-        return false;
+        while (!sell.isEmpty()){
+            int[] temp = sell.poll();
+            ans+=temp[1];
+            ans%=mod;
+        }
+        return ans;
     }
 
     public static void main(String[] args) {
