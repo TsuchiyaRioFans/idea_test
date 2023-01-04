@@ -27,64 +27,49 @@ public class Main {
       ListNode(int val, ListNode next) { this.val = val; this.next = next; }
     }
 
-    public int getNumberOfBacklogOrders(int[][] orders) {
-        int ans = 0;
-        Queue<int[]> buy = new PriorityQueue<>((a,b)->b[0]-a[0]);
-        Queue<int[]> sell = new PriorityQueue<>((a,b)->a[0]-b[0]);
-        for(int[] order:orders){
-            int type = order[2];
-            int val = order[0];
-            int count = order[1];
-            if(type==0){
-                while (!sell.isEmpty()&&sell.peek()[0]<=val&&count>0){
-                    int count1 = sell.peek()[1];
-                    if(count>=count1){
-                        count-=count1;
-                        sell.poll();
-                    }
-                    else{
-                        sell.peek()[1]-=count;
-                        count = 0;
-                    }
-                }
-                if(count>0)
-                    buy.offer(new int[]{val,count});
+
+    public int maxValue(int n, int index, int maxSum) {
+        int left = 1;
+        int right = maxSum;
+        while (left<right){
+            int mid = left+(right-left)/2;
+            if(isValid(index,mid,maxSum,n)){
+                left = mid+1;
             }
             else{
-                while (!buy.isEmpty()&&buy.peek()[0]>=val&&count>0){
-                    int count1 = buy.peek()[1];
-                    if(count>=count1){
-                        count-=count1;
-                        buy.poll();
-                    }
-                    else{
-                        buy.peek()[1]-=count;
-                        count = 0;
-                    }
-                }
-                if(count>0)
-                    sell.offer(new int[]{val,count});
+                right = mid-1;
             }
         }
-        final int mod = (int)Math.pow(10,9)+7;
-        while (!buy.isEmpty()){
-            int[] temp = buy.poll();
-            ans+=temp[1];
-            ans%=mod;
-        }
-        while (!sell.isEmpty()){
-            int[] temp = sell.poll();
-            ans+=temp[1];
-            ans%=mod;
-        }
-        return ans;
+        if(isValid(index,left,maxSum,n))
+            return left;
+        return left-1;
     }
 
+    public boolean isValid(int index,int val,int max,int n){
+        long count = 0;
+        if(val>index){
+            count+= (long) (val + val - index) *(1+index)/2;
+        }
+        else{
+            count+=((index-val+1)+ (long) (1 + val) *(val)/2);
+        }
+        if(count>max)
+            return false;
+        if(val>=(n-index)){
+            count+= (long) (val + val - (n - index)+1) *(n-index)/2;
+        }
+        else{
+            count+=(n-index-val)+ (long) (1 + val) *(val)/2;
+        }
+        count-=val;
+        return count<=max;
+    }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
         int[] nums = new int[]{1,0,0,-1};
         String[] ss = new String[]{"a","b","leetcode"};
         int[][] nums1 = new int[][]{{-5,0}};
+        main.maxValue(4,2,6);
     }
 }
