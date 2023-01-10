@@ -39,59 +39,60 @@ public class Main {
       }
     }
 
-    public int[] rearrangeBarcodes(int[] barcodes) {
-        int n = barcodes.length;
-        int[] ans = new int[n];
-        Map<Integer,Integer> map = new HashMap<>();
-        for(int m:barcodes){
-            map.put(m,1+map.getOrDefault(m,0));
-        }
-        Queue<Map.Entry<Integer,Integer>> queue = new
-                PriorityQueue<>((a,b)->b.getValue().compareTo(a.getValue()));
-        for(Map.Entry<Integer,Integer> entry:map.entrySet())
-            queue.offer(entry);
-        int pos = 0;
-        List<Map.Entry<Integer,Integer>> list = new ArrayList<>();
-        while (!queue.isEmpty()){
-            Map.Entry<Integer,Integer> entry = queue.poll();
-            int key = entry.getKey();
-            int value = entry.getValue();
-            if(pos==0||ans[pos-1]!=key){
-                ans[pos] = key;
-                if(value>1){
-                    entry.setValue(value-1);
-                    queue.offer(entry);
-                }
-            }
-            else{
-                list.add(entry);
-                while (!queue.isEmpty()){
-                    Map.Entry<Integer,Integer> temp = queue.poll();
-                    if(temp.getKey()!=ans[pos-1]){
-                        ans[pos] = temp.getKey();
-                        if(temp.getValue()>1){
-                            temp.setValue(temp.getValue()-1);
-                            list.add(temp);
-                        }
-                        break;
-                    }
-                    list.add(temp);
-                }
-                for(int i=0;i<list.size();i++)
-                    queue.offer(list.get(i));
-                list.clear();
-            }
-            pos++;
-        }
-        return ans;
-    }
 
+    public int reachableNodes(int n, int[][] edges, int[] restricted) {
+        Set<Integer> set = new HashSet<>();
+        set.add(0);
+        Map<Integer,List<Integer>> map = new HashMap<>();
+        Set<Integer> unUse = new HashSet<>();
+        for(int val:restricted)
+            unUse.add(val);
+        for(int[] nums:edges) {
+            int left = nums[0];
+            int right = nums[1];
+            if (!unUse.contains(left) && !unUse.contains(right)) {
+                if (map.containsKey(left))
+                    map.get(left).add(right);
+                else {
+                    List<Integer> temp = new ArrayList<>();
+                    temp.add(right);
+                    map.put(left, temp);
+                }
+                if (map.containsKey(right))
+                    map.get(right).add(left);
+                else {
+                    List<Integer> temp = new ArrayList<>();
+                    temp.add(left);
+                    map.put(right, temp);
+                }
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(0);
+        while (!queue.isEmpty()){
+            int length = queue.size();
+            for(int i=0;i<length;i++){
+                int val = queue.poll();
+                if(map.containsKey(val)){
+                    List<Integer> temp = map.get(val);
+                    for(int j=0;j<temp.size();j++){
+                        int t = temp.get(j);
+                        if(set.contains(t))
+                            continue;
+                        set.add(t);
+                        queue.offer(t);
+                    }
+                }
+            }
+        }
+        return set.size();
+    }
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
-        int[] nums = new int[]{2,2,1,3};
+        int[] nums = new int[]{4,5};
         String[] ss = new String[]{"a","b","leetcode"};
-        int[][] nums1 = new int[][]{{-5,0}};
-        main.rearrangeBarcodes(nums);
+        int[][] nums1 = new int[][]{{0,1},{1,2},{3,1},{4,0},{0,5},{5,6}};
+        main.reachableNodes(7,nums1,nums);
     }
 }
