@@ -1,3 +1,5 @@
+import netscape.javascript.JSUtil;
+
 import java.math.BigInteger;
 import java.util.*;
 
@@ -39,68 +41,119 @@ public class Main {
       }
     }
 
-    public List<String> alertNames(String[] keyName, String[] keyTime) {
-        Set<String> set = new HashSet<>();
-        Map<String,List<String>> map = new HashMap<>();
-        for(int i=0;i<keyName.length;i++){
-            if(set.contains(keyName[i]))
-                continue;
-            if(map.containsKey(keyName[i]))
-                map.get(keyName[i]).add(keyTime[i]);
-            else{
-                List<String> list = new ArrayList<>();
-                list.add(keyTime[i]);
-                map.put(keyName[i],list);
-            }
-            Collections.sort(map.get(keyName[i]),(a,b)->{
-                String[] ss1 = a.split(":");
-                String[] ss2 = b.split(":");
-                int a1 = Integer.parseInt(ss1[0]);
-                int a2 = Integer.parseInt(ss1[1]);
-                int b1 = Integer.parseInt(ss2[0]);
-                int b2 = Integer.parseInt(ss2[1]);
-                if(a1<b1)
-                    return -1;
-                if(a1>b1)
-                    return 1;
-                if(a2<b2)
-                    return -1;
-                if(a2>b2)
-                    return 1;
-                return 0;
-            });
-            List<String> temp = map.get(keyName[i]);
-            for(int j=0;j<temp.size()-2;j++){
-                if(fun(temp.get(j),temp.get(j+2))){
-                    set.add(keyName[i]);
-                    break;
+
+    public int distinctIntegers(int n) {
+        Set<Integer> set = new HashSet<>();
+        set.add(n);
+        List<Integer> temp =  new ArrayList<>();
+        for(int i=0;i<(int)Math.pow(10,9);i++){
+            for(Integer integer:set){
+                for(int j=1;j<=integer;j++){
+                    if(set.contains(j))
+                        continue;
+                    if(integer%j==1)
+                        temp.add(j);
                 }
             }
+            if(temp.size()==0)
+                break;
+            set.addAll(temp);
+            temp.clear();
         }
-        List<String> ans = new ArrayList<>(set);
-        Collections.sort(ans);
+        return set.size();
+    }
+
+    public int monkeyMove(int n) {
+        final int mod = (int)Math.pow(10,9)+7;
+        long ans = 1;
+        long val = 2;
+        while(n>0){
+            int flag = n&1;
+            if(flag==1)
+                ans *= val;
+            val *= val;
+            n >>= 1;
+            if(ans>mod)
+                ans %= mod;
+            else if(ans<0)
+                ans+=mod;
+            if(val>mod)
+                val%=mod;
+            else if(val<0)
+                val+=mod;
+        }
+        int res = (int)ans-2;
+//        return res>=0?res:res+mod;
+        return res;
+    }
+
+    public long putMarbles(int[] weights, int k) {
+        List<Integer> list = new ArrayList<>();
+        for(int n:weights)
+            list.add(n);
+        int n = weights.length;
+        long max = weights[0]+weights[n-1];
+        long min = weights[0]+weights[n-1];
+        Collections.sort(list);
+        return max-min;
+    }
+
+
+    class BIT {
+        int[] tree;
+        int n;
+
+        public BIT(int n) {
+            this.n = n;
+            this.tree = new int[n + 1];
+        }
+
+        public int lowbit(int x) {
+            return x & (-x);
+        }
+
+        public void update(int x, int d) {
+            while (x <= n) {
+                tree[x] += d;
+                x += lowbit(x);
+            }
+        }
+
+        public int query(int x) {
+            int ans = 0;
+            while (x != 0) {
+                ans += tree[x];
+                x -= lowbit(x);
+            }
+            return ans;
+        }
+    }
+
+    public int trap(int[] height) {
+        int n = height.length;
+        int ans = 0;
+        int[] left = new int[n];
+        int[] right = new int[n];
+        for(int i=1;i<n;i++)
+            left[i] = Math.max(left[i-1],height[i-1]);
+        for(int i=n-2;i>=0;i--)
+            right[i] = Math.max(right[i+1],height[i+1]);
+        for(int i=0;i<n;i++){
+            int bottom = height[i];
+            int top = Math.min(left[i],right[i]);
+            if(top<=bottom)
+                continue;
+            ans+=(top-bottom);
+        }
         return ans;
     }
 
-    public boolean fun(String a,String b){
-        String[] ss1 = a.split(":");
-        String[] ss2 = b.split(":");
-        int a1 = Integer.parseInt(ss1[0]);
-        int a2 = Integer.parseInt(ss1[1]);
-        int b1 = Integer.parseInt(ss2[0]);
-        int b2 = Integer.parseInt(ss2[1]);
-        int ans = 0;
-        ans+=(b1-a1)*60;
-        ans+=(b2-a2);
-        return ans<=60;
-    }
+
     public static void main(String[] args) {
         Main main = new Main();
 //        main.getNums("[[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]");
-        int[] nums = new int[]{1,1,1,1,1};
-        String[] ss1 = new String[]{"daniel","daniel","daniel","luis","luis","luis","luis"};
-        String[] ss2 = new String[]{"10:00","10:40","11:00","09:00","11:00","13:00","15:00"};
+        int[] nums = new int[]{0,1,0,2,1,0,1,3,2,1,2,1};
         int[][] nums1 = new int[][]{{0,1},{1,2},{3,1},{4,0},{0,5},{5,6}};
-        main.alertNames(ss1,ss2);
+        main.trap(nums);
     }
 }
