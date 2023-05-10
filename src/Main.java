@@ -175,10 +175,44 @@ public class Main {
         ans[1] = Long.parseLong(s.substring(pos+1));
         return ans;
     }
+
+    public int lastRemaining(int n) {
+        int left = 1;
+        int right = n;
+        int d = 2;
+        while (n>0){
+            int length = (right-left)/Math.abs(d)+1;
+            if(n>length){
+                n-=length;
+                int t = Math.abs(d)/2;
+                if(d>0){
+                    if((right-left)%d==0)
+                        right-=t;
+                    left+=t;
+                }
+                else{
+                    if((right-left)%d==0)
+                        left+=t;
+                    right-=t;
+                }
+                d*=-2;
+            }
+            else{
+                if(d>0){
+                    return left+(n-1)*d;
+                }
+                else{
+                    return right+(n-1)*d;
+                }
+            }
+        }
+        return 0;
+    }
     public static void main(String[] args) {
         Main main = new Main();
         int[] nums = new int[]{0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10};
         int[][] nums1 = new int[][]{{0,1},{1,2}};
-        System.out.println(2);
+        int ans = main.lastRemaining(12);
+        System.out.println(ans);
     }
 }
