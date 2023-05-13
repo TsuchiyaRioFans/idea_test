@@ -1,3 +1,6 @@
+import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
+import netscape.javascript.JSUtil;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -112,107 +115,10 @@ public class Main {
         return left;
     }
 
-    public String fractionAddition(String expression) {
-        int n = expression.length();
-        char[] chs = expression.toCharArray();
-        String ans = "";
-        for(int i=0;i<n;){
-            int j =i+1;
-            while (j<n&&chs[j]!='-'&&chs[j]!='+')
-                j++;
-            String t = expression.substring(i,j);
-            if(chs[i]!='+'&&chs[i]!='-')
-                t = "+"+t;
-            ans = ans.equals("")?t:calc(ans,t);
-            i=j;
-        }
-        return ans.charAt(0)=='+'?ans.substring(1):ans;
-    }
 
-    public String calc(String a,String b){
-        boolean fa = a.charAt(0)=='+';
-        boolean fb = b.charAt(0)=='+';
-        if(!fa&&fb)
-            return calc(b,a);
-        long[] p = parse(a);
-        long[] q = parse(b);
-        long p1 =p[0]*q[1];
-        long p2 = p[1]*q[0];
-        if(fa&&fb){
-            long r1 = p1+p2, r2 = p[1]*q[1] , c = gcd(r1,r2);
-            return "+"+(r1/c)+"/"+(r2/c);
-        }
-        else if(!fa){
-            long r1 = p1+p2, r2 = p[1]*q[1] , c = gcd(r1,r2);
-            return "-"+(r1/c)+"/"+(r2/c);
-        }
-        else{
-            long r1 = p1 - p2, r2 = p[1] * q[1], c = gcd(Math.abs(r1), r2);
-            String ans = (r1 / c) + "/" + (r2 / c);
-            return p1 >= p2 ? "+" + ans : ans;
-        }
-
-    }
-
-    public long gcd(long a,long b){
-        if(a<b){
-            return gcd(b,a);
-        }
-        return b == 0?a:gcd(b,a%b);
-    }
-
-    public long[] parse(String s){
-        int n = s.length();
-        long[] ans = new long[2];
-        int pos = 1;
-        while (pos<n){
-            char ch = s.charAt(pos);
-            if(ch=='/')
-                break;
-            pos++;
-        }
-        ans[0] = Long.parseLong(s.substring(1,pos));
-        ans[1] = Long.parseLong(s.substring(pos+1));
-        return ans;
-    }
-
-    public int lastRemaining(int n) {
-        int left = 1;
-        int right = n;
-        int d = 2;
-        while (n>0){
-            int length = (right-left)/Math.abs(d)+1;
-            if(n>length){
-                n-=length;
-                int t = Math.abs(d)/2;
-                if(d>0){
-                    if((right-left)%d==0)
-                        right-=t;
-                    left+=t;
-                }
-                else{
-                    if((right-left)%d==0)
-                        left+=t;
-                    right-=t;
-                }
-                d*=-2;
-            }
-            else{
-                if(d>0){
-                    return left+(n-1)*d;
-                }
-                else{
-                    return right+(n-1)*d;
-                }
-            }
-        }
-        return 0;
-    }
     public static void main(String[] args) {
         Main main = new Main();
         int[] nums = new int[]{0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10};
         int[][] nums1 = new int[][]{{0,1},{1,2}};
-        int ans = main.lastRemaining(12);
-        System.out.println(ans);
     }
 }
